@@ -94,19 +94,16 @@ if args.dataset == "mnist":
     testset = dset.MNIST(root="./data", train=False, download=True)
     dataset_mnist = dset.MNIST(root="./data", train=False, download=True, transform=transforms.Compose([transforms.Resize(32), transforms.ToTensor()]))
     test_loader = torch.utils.data.DataLoader(dataset_mnist, batch_size=args.batchsize, shuffle=False)
-    (rows, cols, chn) = (28, 28, 1)
     
 elif args.dataset == "cifar10":
     testset = dset.CIFAR10(root="./data", train = False, download=True)
     dataset_cifar = dset.CIFAR10(root="./data", download=True, train = False, transform=transforms.Compose([transforms.Resize(32), transforms.ToTensor()]))
     test_loader = torch.utils.data.DataLoader(dataset_cifar, batch_size=args.batchsize, shuffle=False)
-    (rows, cols, chn) = (32, 32, 3)
     
 else:
     testset = dset.FashionMNIST(root="./data", train=False, download=True)
     dataset_fmnist = dset.FashionMNIST(root="./data", train=False, download=True, transform=transforms.Compose([transforms.Resize(32), transforms.ToTensor()]))
     test_loader = torch.utils.data.DataLoader(dataset_fmnist, batch_size=args.batchsize, shuffle=False)
-    (rows, cols, chn) = (28, 28, 1)
 
 mu_test, sd_test = evaluate(model, test_loader, logger)
 

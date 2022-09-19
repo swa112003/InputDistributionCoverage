@@ -68,10 +68,7 @@ parser.add_argument('-L', '--log-level', help="Logging levels.",
                          default=default_config['log_level'], choices=LOG_LEVELS) 
 parser.add_argument('--dataset', type=str,
                             default="mnist", choices=["mnist", "cifar10", "fmnist"],
-                            help='dataset')     
-parser.add_argument('--prefix', type=str,
-                            default="fvae", choices=["fvae", "tvae1", "tvae2"],
-                            help='vae type')                              
+                            help='dataset')                         
                          
 args = parser.parse_args()
 
@@ -123,19 +120,20 @@ noise = []
 for l in range(mu_test.shape[1]):
     if abs(kl_div[l]) <= 0.01:
         noise.append(l)
+
+#no of dimensions with information
+info_dims = mu_test.shape[1] - len(noise)
+
 mu_test = np.delete(mu_test, noise, 1)
-
 print(f"deleting columns {noise} with KL {kl_div[noise]} from the latent mean vector")
-print("filtered latent shape ", mu_test.shape)
 
-latent_dim = mu_test.shape[1]
-csv_header = ""
-for k in range(latent_dim):
-    csv_header += "p"+str(k+1)
-    if k < latent_dim-1:
-        csv_header += ","
+#create acts file for measuring total t-way coverage
+acts = create_acts(info_dims, args.no_bins)
 
 #generate feasible feature vectors
-array_test, valid_samples, _ = generate_array(mu_test, args.density, args.no_bins)
+feasible_vectors, valid_samples, _ = generate_array(mu_test, args.density, args.no_bins)
 print(f"full test set valid samples {valid_samples} \n\n")
-np.savetxt(f'../arrays_{args.prefix}/{args.dataset}_testset.csv', array_test, delimiter=",", header=csv_header, fmt='%d')
+
+coverage = measure_coverage(feasible_vectors, acts, ways=args.ways, timeout=15)
+print(f"total {args.ways}-way coverage wrt covering array is {coverage}")
+

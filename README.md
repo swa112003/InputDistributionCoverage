@@ -37,7 +37,7 @@ Running this tool requires Java installed on the machine.
 - Run `run.sh` to measure the total t-way coverage of the test datasets of MNIST, Fashion-MNIST and CIFAR10. 
 
 ```
-  run.sh [dataset: mnist/fmnist/cifar10] [vae: btcvae/factor] [latent_dim] [intervals] [ways] [target_density: range[0.1]]
+  run.sh [dataset: mnist/fmnist/cifar10] [vae: btcvae/factor] [latent_dim] [intervals] [ways] [target_density: range[0,1]]
 
   E.g. run.sh mnist btcvae 8 20 3 0.9999
 ```

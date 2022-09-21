@@ -81,23 +81,38 @@ def generate_array(latent, density, no_bins=10):
     #calculate annulus boundary based on density
     radin, radout = chi.interval(density, latent.shape[1])
     
-    #create partition intervals
-    latent_range = (-radout, radout)
-    intervals = create_intervals(latent.shape[1], no_bins, latent_range)    
+    #print("***Calculations using Chi distribution for density {} ".format(density))
+    #print("inner radius = {} and outer radius = {}".format(radin, radout))
     
-    #filter out the samples outside the annulus
+    latent_range = (-radout, radout)
+    #print("latent bounds ", latent_range)
+    
+    intervals = create_intervals(latent.shape[1], no_bins, latent_range)
+    #print("intervals on each dimension {}".format(intervals))
+    
+    #below commented out code is redundant
+    #print("original latent shape ", latent.shape)
+    #latent = latent[np.all(latent >= latent_range[0], axis = 1)]
+    #latent = latent[np.all(latent < latent_range[1], axis = 1)]
+    #print(f"Filtered latent shape {latent.shape} in latent range {latent_range}")
+    
+    
     x_squares = np.square(latent)
     radius_vector = np.sqrt(np.sum(x_squares, axis=1)).reshape(-1,1)
     indices1 = np.argwhere(radius_vector < radin)[:, 0]
     latent = latent[(radius_vector >= radin).reshape(-1)]
+    
     x_squares = np.square(latent)
     radius_vector = np.sqrt(np.sum(x_squares, axis=1)).reshape(-1,1)
     indices2 = np.argwhere(radius_vector > radout)[:, 0]
     latent = latent[(radius_vector <= radout).reshape(-1)]
+    #print(f"Filtered latent inside the shell [{round(radin, 4)}, {round(radout, 4)}] is {latent.shape}")
     
-    #Finding feasible feature vectors of test inputs in latent space wrt partitions created above
+    #Finding array of test inputs mean values in latent space wrt partitions created above
     cov_array = np.digitize(latent[:, 0], intervals).reshape(-1, 1)
+    #print("array shape {}".format(cov_array.shape))
     for i in range(latent.shape[1]-1):
         cov_vector = np.digitize(latent[:, i+1], intervals).reshape(-1, 1)
         cov_array = np.concatenate((cov_array, cov_vector), axis=1)
+    #print("array shape for testing dataset {}".format(cov_array.shape)) 
     return cov_array, latent.shape[0], (indices1,indices2)

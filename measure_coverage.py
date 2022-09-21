@@ -8,7 +8,7 @@ import torch
 from torchvision import datasets, transforms
 from disvae.utils.modelIO import load_model, load_metadata
 from utils.helpers import get_device, set_seed, get_config_section, FormatterNoDuplicate
-from helper import generate_array
+from helper import *
 from torch.utils.data import Dataset, DataLoader
 import torchvision.datasets as dset
 from timeit import default_timer as timer
@@ -122,15 +122,14 @@ for l in range(mu_test.shape[1]):
 info_dims = mu_test.shape[1] - len(noise)
 
 mu_test = np.delete(mu_test, noise, 1)
-print(f"deleting columns {noise} with KL {kl_div[noise]} from the latent mean vector")
+print(f"deleting columns {noise} with KL {kl_div[noise]} from the latent vectors")
 
 #create acts file for measuring total t-way coverage
 acts = create_acts(info_dims, args.no_bins)
 
 #generate feasible feature vectors
 feasible_vectors, valid_samples, _ = generate_array(mu_test, args.density, args.no_bins)
-print(f"full test set valid samples {valid_samples} \n\n")
+print(f"#valid samples in the testset: {valid_samples}")
 
-coverage = measure_coverage(feasible_vectors, acts, ways=args.ways, timeout=15)
-print(f"total {args.ways}-way coverage wrt covering array is {coverage}")
-
+coverage = measure_coverage(feasible_vectors, acts, ways=args.ways, timeout=30)
+print(f"total {args.ways}-way coverage of the testset is {coverage}")

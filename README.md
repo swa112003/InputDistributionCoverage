@@ -30,6 +30,9 @@ Running this tool requires Java installed on the machine.
 - Create virtual environment
 
     `python -m venv idc`
+- Activate virtual environment
+
+    `source idc/bin/activate
 - Install the required packages using the `requirements.txt` file.
 
     `pip install -r requirements.txt`

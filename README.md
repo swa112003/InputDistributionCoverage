@@ -51,7 +51,7 @@ Test coverage of custom test sets can be measured by setting the file path argum
 ```
 python measure_coverage.py [vae] --dataset [mnist/fmnist/cifar10] --no_bins [intervals] --ways [ways] --density [target density: range[0,1]] --path [numpy file path]
 
-E.g. python measure_coverage.py btcvae_mnist_6 --dataset mnist --no_bins 20 --ways 3 --density 0.9999 ./custom_testset.npy
+E.g. python measure_coverage.py btcvae_mnist_6 --dataset mnist --no_bins 20 --ways 3 --density 0.9999 --path ./custom_testset.npy
 ```
 ## References
 <a id="1">[1]</a> Xiao, Zhisheng, Qing Yan, and Yali Amit. "Likelihood regret: An out-of-distribution detection score for variational auto-encoder." Advances in neural information processing systems 33 (2020): 20685-20696.

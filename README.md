@@ -37,21 +37,21 @@ Running this tool requires Java installed on the machine.
 
     `pip install -r requirements.txt`
 
-- Run `run.sh` to measure the total t-way coverage of the test datasets of MNIST, Fashion-MNIST and CIFAR10. 
+- Run `measure_coverage.py` to measure the total t-way coverage of the test datasets of MNIST, Fashion-MNIST and CIFAR10. Refer to [results](https://github.com/swa112003/IDC_temp/tree/main/results) directory for supported VAE models.
 
 ```
-  run.sh [dataset: mnist/fmnist/cifar10] [vae: btcvae/factor] [latent_dim] [intervals] [ways] [target_density: range[0,1]]
+  python measure_coverage.py [vae] --dataset [mnist/fmnist/cifar10] --no_bins [intervals] --ways [ways] --density [target density: range[0,1]]
 
-  E.g. run.sh mnist btcvae 8 20 3 0.9999
+  E.g. : python measure_coverage.py btcvae_mnist_6 --dataset mnist --no_bins 20 --ways 3 --density 0.9999
 ```
 
 ## Measuring test coverage of custom test sets
-Test coverage of custom test sets can be measured by providing the file path argument. The test set should be in numpy format.
+Test coverage of custom test sets can be measured by providing the file path argument. Use Likelihood Regret to filter out the OOD test inputs, and convert the in-distribution test inputs into numpy format. Run the below command.
 
 ```
-run.sh [dataset: mnist/fmnist/cifar10] [vae: btcvae/factor] [latent_dim] [intervals] [ways] [target_density: range[0,1]] [path]
+python measure_coverage.py [vae] --dataset [mnist/fmnist/cifar10] --no_bins [intervals] --ways [ways] --density [target density: range[0,1]] --path [numpy file path]
 
-E.g. run.sh mnist btcvae 8 20 3 0.9999 ./custom_testset.npy
+E.g. python measure_coverage.py btcvae_mnist_6 --dataset mnist --no_bins 20 --ways 3 --density 0.9999 ./custom_testset.npy
 ```
 ## References
 <a id="1">[1]</a> Xiao, Zhisheng, Qing Yan, and Yali Amit. "Likelihood regret: An out-of-distribution detection score for variational auto-encoder." Advances in neural information processing systems 33 (2020): 20685-20696.

@@ -18,7 +18,27 @@ import imageio
 CONFIG_FILE = "hyperparam.ini"
 RES_DIR = "results"
 LOG_LEVELS = list(logging._levelToName.values())
-      
+
+class MyDataset(Dataset):
+    def __init__(self, data, targets, channels, transform=None):
+        self.data = data
+        self.targets = torch.LongTensor(targets)
+        self.transform = transform
+        self.channels = channels
+    def __getitem__(self, index):
+        x = self.data[index]
+        y = self.targets[index]
+        if self.transform:
+            if self.channels == 3:
+                x = Image.fromarray(self.data[index].astype(np.uint8), 'RGB')
+            else:
+                x = Image.fromarray(self.data[index].astype(np.uint8))
+            x = self.transform(x)
+        return x, y
+    
+    def __len__(self):
+        return len(self.data)
+
 #Calculate mean and log variance vectors output by the encoder for the test inputs
 def evaluate(model, testloader, logger):
     initialize = True
@@ -68,7 +88,8 @@ parser.add_argument('-L', '--log-level', help="Logging levels.",
                          default=default_config['log_level'], choices=LOG_LEVELS) 
 parser.add_argument('--dataset', type=str,
                             default="mnist", choices=["mnist", "cifar10", "fmnist"],
-                            help='dataset')                         
+                            help='dataset')
+parser.add_argument('--path', type=str, default="None", help='path to the custom dataset in numpy file format')
                          
 args = parser.parse_args()
 
@@ -104,7 +125,7 @@ else:
     testset = dset.FashionMNIST(root="./data", train=False, download=True)
     dataset_fmnist = dset.FashionMNIST(root="./data", train=False, download=True, transform=transforms.Compose([transforms.Resize(32), transforms.ToTensor()]))
     test_loader = torch.utils.data.DataLoader(dataset_fmnist, batch_size=args.batchsize, shuffle=False)
-
+      
 mu_test, sd_test = evaluate(model, test_loader, logger)
 
 #calculate the KL-divergence for the testdata set
@@ -121,6 +142,15 @@ for l in range(mu_test.shape[1]):
 #no of dimensions with information
 info_dims = mu_test.shape[1] - len(noise)
 
+if args.path != "None":
+      testset = np.load(args.path).astype("float32")
+      assert np.amax(testset) > 1, "custom testset shouldn't be normalized"
+      (n, rows, cols, chn) = testset.shape
+      if chn == 1:
+            testset = testset.reshape((n, rows, cols))
+      dataset = MyDataset(testset, np.ones((testset.shape[0])), chn, transform=transforms.Compose([transforms.Resize(32), transforms.ToTensor()]))
+      test_loader = DataLoader(dataset, batch_size=args.batchsize)
+      mu_test, _ = evaluate(model, test_loader, logger)
 mu_test = np.delete(mu_test, noise, 1)
 print(f"deleting columns {noise} with KL {kl_div[noise]} from the latent vectors")
 

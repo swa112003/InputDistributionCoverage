@@ -46,8 +46,13 @@ Running this tool requires Java installed on the machine.
 ```
 
 ## Measuring test coverage of custom test sets
-Test coverage of custom test sets can be measured by changing the `test_loader` logic in the `measure_coverage.py` script.
+Test coverage of custom test sets can be measured by providing the file path argument. The test set should be in numpy format.
 
+```
+run.sh [dataset: mnist/fmnist/cifar10] [vae: btcvae/factor] [latent_dim] [intervals] [ways] [target_density: range[0,1]] [path]
+
+E.g. run.sh mnist btcvae 8 20 3 0.9999 ./custom_testset.npy
+```
 ## References
 <a id="1">[1]</a> Xiao, Zhisheng, Qing Yan, and Yali Amit. "Likelihood regret: An out-of-distribution detection score for variational auto-encoder." Advances in neural information processing systems 33 (2020): 20685-20696.
 

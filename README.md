@@ -46,7 +46,7 @@ Running this tool requires Java installed on the machine.
 ```
 
 ## Measuring test coverage of custom test sets
-Test coverage of custom test sets can be measured by providing the file path argument. Use Likelihood Regret to filter out the OOD test inputs, and convert the in-distribution test inputs into numpy format. Run the below command.
+Test coverage of custom test sets can be measured by setting the file path argument of `measure_coverage.py`. Use Likelihood Regret to filter out the OOD test inputs, and convert the in-distribution test inputs into numpy format. Run the below command.
 
 ```
 python measure_coverage.py [vae] --dataset [mnist/fmnist/cifar10] --no_bins [intervals] --ways [ways] --density [target density: range[0,1]] --path [numpy file path]
